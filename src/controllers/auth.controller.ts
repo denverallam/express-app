@@ -1,15 +1,9 @@
 import { Request, Response } from "express";
-import { User } from "../models/user.model";
-import { encryptPassword } from "../util/encrypt";
-import { validateEmail, validatePassword } from "../util/validate";
 import { Op } from "sequelize";
+import { User } from "../models";
+import { PasswordService } from "../services";
+import { validateEmail } from "../util";
 
-/**
- * 
- * @param {Requset} req
- * @param res
- * @returns 
- */
 export const register = async (req: Request, res: Response) => {
     try {
         const { email, password, userName, firstName, lastName } = req.body;
@@ -37,7 +31,7 @@ export const register = async (req: Request, res: Response) => {
         }
 
         // Encrypt password before saving
-        const encryptedPassword = await encryptPassword(password);
+        const encryptedPassword = await PasswordService.encryptPassword(password);
         const result = await User.create({ email, userName, password: encryptedPassword, firstName, lastName });
 
         // Omit password from response
@@ -58,7 +52,7 @@ export const login = async (req: Request, res: Response) => {
             return
         }
 
-        const isPasswordValid = await validatePassword(password, user.password);
+        const isPasswordValid = await PasswordService.validatePassword(password, user.password);
         if (!isPasswordValid) {
             res.status(401).json({ message: "Invalid password" });
             return

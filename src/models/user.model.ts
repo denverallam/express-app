@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from "../config/db.config";
-import { compare } from "bcrypt";
+import { sequelize } from "../config";
 
 
 interface UserAttributes {

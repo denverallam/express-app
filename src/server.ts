@@ -1,12 +1,12 @@
 import express, { Application } from 'express';
-import { authRouter } from './routes/auth.route';
-import { sequelize } from './config/db.config';
+import { sequelize } from './config';
+import { authRoute } from './routes';
 
 const app: Application = express();
 
 app.use(express.json())
 
-app.use(authRouter)
+app.use(authRoute)
 
 const port = process.env.PORT
 
