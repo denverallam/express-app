@@ -1,15 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
+import { UserAttributes } from "../common/types";
 import { sequelize } from "../config";
-
-
-interface UserAttributes {
-    id: number;
-    email: string;
-    password: string;
-    userName: string
-    firstName: string;
-    lastName: string;
-}
 
 type UserCreationAttributes = Optional<UserAttributes, 'id'>
 
