@@ -1,1 +1,1 @@
-export * as AuthMiddleware from './auth.middleware'
+export * as AuthMiddleware from './auth.middleware';
