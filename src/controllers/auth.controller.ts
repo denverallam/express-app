@@ -1,12 +1,16 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Op } from 'sequelize';
 import { User } from '../models';
 import { AuthService } from '../services';
 import { validateEmail } from '../util';
 
-export const register = async (req: Request, res: Response): Promise<void> => {
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
-    const { email, password, userName, firstName, lastName } = req.body;
+    const { email, userName } = req.body;
 
     if (!validateEmail(email)) {
       res.status(400).json({ message: 'Invalid email' });
@@ -24,25 +28,22 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const encryptedPassword = await AuthService.encryptPassword(password);
     const result = await User.create({
-      email,
-      userName,
-      password: encryptedPassword,
-      firstName,
-      lastName,
+      ...req.body,
     });
 
     const { password: _, ...userWithoutPassword } = result.get();
     res.status(201).json({ user: userWithoutPassword });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: `An error occurred with registration: ${err.message}` });
+    next(err);
   }
 };
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -56,6 +57,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       password,
       user.password,
     );
+
     if (!isPasswordValid) {
       res.status(401).json({ message: 'Invalid password' });
       return;
@@ -66,8 +68,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({ token });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: `An error occurred with login: ${err.message}` });
+    next(err);
   }
 };

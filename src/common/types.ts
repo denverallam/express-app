@@ -2,11 +2,11 @@ import { Request } from 'express';
 import { User } from '../models';
 
 export interface AuthRequest extends Request {
-  user?: Partial<User>;
+  user?: Omit<User, 'password' | 'id'>;
 }
 
 export interface UserAttributes {
-  id: number;
+  id: string;
   email: string;
   password: string;
   userName: string;

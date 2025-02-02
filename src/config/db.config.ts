@@ -8,4 +8,5 @@ const user = String(process.env.DB_USER);
 export const sequelize = new Sequelize(database, user, password, {
   dialect: 'mysql',
   host,
+  logging: false,
 });

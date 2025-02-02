@@ -1,6 +1,7 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { CreationOptional, DataTypes, Model, Optional } from 'sequelize';
 import { UserAttributes } from '../common/types';
 import { sequelize } from '../config';
+import { AuthService } from '../services';
 
 type UserCreationAttributes = Optional<UserAttributes, 'id'>;
 
@@ -8,7 +9,7 @@ export class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  declare id: number;
+  declare id: CreationOptional<string>;
   declare email: string;
   declare userName: string;
   declare password: string;
@@ -22,9 +23,9 @@ export class User
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
     },
     userName: {
       type: DataTypes.STRING,
@@ -53,5 +54,13 @@ User.init(
     tableName: 'users',
     sequelize,
     timestamps: true,
+    hooks: {
+      beforeCreate: async (user: User) => {
+        const encryptedPassword = await AuthService.encryptPassword(
+          user.password,
+        );
+        user.password = encryptedPassword;
+      },
+    },
   },
 );

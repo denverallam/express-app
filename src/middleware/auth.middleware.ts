@@ -26,10 +26,6 @@ export const authenticate = (
     req.user = user;
     next();
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: `An error occurred with authentication: ${err.message}`,
-      });
+    next(err);
   }
 };

@@ -2,16 +2,16 @@ import cors from 'cors';
 import express, { Application } from 'express';
 import helmet from 'helmet';
 import { corsConfig, sequelize } from './config';
+import { errorHandlerMiddleware } from './middleware/error.middleware';
 import { authRoute, userRoute } from './routes';
 
 const app: Application = express();
 
-app.use(cors(corsConfig));
-app.use(helmet());
-app.use(express.json());
+app.use(cors(corsConfig)).use(helmet()).use(express.json());
 
-app.use(authRoute);
-app.use(userRoute);
+app.use(authRoute).use(userRoute);
+
+app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT;
 

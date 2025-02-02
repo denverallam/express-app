@@ -1,10 +1,11 @@
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { Types } from '../common';
 import { User } from '../models';
 
 export const getProfile = async (
   req: Types.AuthRequest,
   res: Response,
+  next: NextFunction,
 ): Promise<void> => {
   try {
     if (!req.user) {
@@ -22,6 +23,6 @@ export const getProfile = async (
     const { password, ...userWithoutPassword } = user.get();
     res.status(200).json({ user: userWithoutPassword });
   } catch (err) {
-    res.status(500).json({ message: `An error occurred: ${err.message}` });
+    next(err);
   }
 };
